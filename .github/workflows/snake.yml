@@ -1,4 +1,4 @@
-name: Update contribution snake
+name: Update profile widgets
 
 on:
   schedule:
@@ -32,14 +32,36 @@ jobs:
             dist/snake.svg?palette=github&color_snake=#8b5cf6
             dist/snake-dark.svg?palette=github-dark&color_snake=#c4b5fd
 
+      - name: Generate light language card
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2
+        with:
+          card: top-langs
+          options: username=${{ github.repository_owner }}&layout=compact&langs_count=6&card_width=420&custom_title=Languages&size_weight=1&count_weight=0&title_color=8b5cf6&text_color=24292f&bg_color=00000000&hide_border=true&disable_animations=true
+          path: dist/languages.svg
+          core_version: 2.2.0
+          fail_on_error: 'true'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate dark language card
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2
+        with:
+          card: top-langs
+          options: username=${{ github.repository_owner }}&layout=compact&langs_count=6&card_width=420&custom_title=Languages&size_weight=1&count_weight=0&title_color=c4b5fd&text_color=c9d1d9&bg_color=00000000&hide_border=true&disable_animations=true
+          path: dist/languages-dark.svg
+          core_version: 2.2.0
+          fail_on_error: 'true'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish generated SVGs
         run: |
           test -s dist/snake.svg
           test -s dist/snake-dark.svg
+          test -s dist/languages.svg
+          test -s dist/languages-dark.svg
           git switch --orphan output
-          mv dist/snake.svg dist/snake-dark.svg .
+          mv dist/snake.svg dist/snake-dark.svg dist/languages.svg dist/languages-dark.svg .
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- snake.svg snake-dark.svg
-          git commit -m 'Update contribution snake'
+          git add -- snake.svg snake-dark.svg languages.svg languages-dark.svg
+          git commit -m 'Update profile widgets'
           git push --force origin HEAD:refs/heads/output
